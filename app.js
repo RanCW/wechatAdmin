@@ -5,6 +5,7 @@ const json = require('koa-json')
 const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
+const mongoose = require('mongoose')
 
 const index = require('./routes/index')
 const users = require('./routes/users')
@@ -37,7 +38,14 @@ app.use(async (ctx, next) => {
 // routes
 app.use(index.routes(), index.allowedMethods())
 app.use(users.routes(), users.allowedMethods())
-
+//连接数据库
+mongoose.connect('localhost','27017',function (error) {
+  if (error){
+    console.log('连接数据库失败')
+  }else{
+    console.log('连接数据库成功');
+  }
+});
 // error-handling
 app.on('error', (err, ctx) => {
   console.error('server error', err, ctx)
