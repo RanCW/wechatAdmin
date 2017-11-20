@@ -6,7 +6,6 @@ const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
 const mongoose = require('mongoose')
-const session = require('koa-session2')
 
 const index = require('./routes/index')
 //跨域设置start
@@ -16,13 +15,6 @@ app.use(cors());
 //跨域设置end
 
 //koa-session设置start
-var session_option={
-  key: 'wechat', /** (string) cookie key (default is koa:sess) */
-  domain:'localhost',
-  maxAge:86400000,
-  httpOnly:true
-}
-app.use(session(session_option, app));
 //koa-session设置end
 
 // error handler
