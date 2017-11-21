@@ -10,6 +10,7 @@ const mongoose = require('mongoose')
 const index = require('./routes/index')
 //跨域设置start
 const users = require('./routes/users')
+const news_router = require('./routes/news')
 var cors = require('koa2-cors')
 app.use(cors());
 //跨域设置end
@@ -43,6 +44,7 @@ app.use(async (ctx, next) => {
 // routes
 app.use(index.routes(), index.allowedMethods())
 app.use(users.routes(), users.allowedMethods())
+app.use(news_router.routes(), news_router.allowedMethods())
 //连接数据库
 mongoose.connect('localhost','27017',function (error) {
   if (error){

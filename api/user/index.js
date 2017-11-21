@@ -31,8 +31,6 @@ exports.user_register = async (ctx, next) => {
 }
 //用户登录
 exports.user_login = async (ctx, next) => {
-    console.log('这里是cookie')
-    console.log(ctx.cookies.get('user_name'))
     let obj = ctx.request.body;
     let user_name = obj.user_name;
     let pass_word = obj.password;
