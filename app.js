@@ -8,6 +8,8 @@ const logger = require('koa-logger')
 const mongoose = require('mongoose')
 
 const index = require('./routes/index')
+//用户模块api
+const user_controller=require('./api/user/index')
 //跨域设置start
 const users = require('./routes/users')
 const news_router = require('./routes/news')
@@ -27,7 +29,7 @@ app.use(bodyparser({
 }))
 app.use(json())
 app.use(logger())
-app.use(require('koa-static')(__dirname + '/public'))
+app.use(require('koa-static')(__dirname + '/views'))
 
 app.use(views(__dirname + '/views', {
   extension: 'pug'
@@ -36,6 +38,10 @@ app.use(views(__dirname + '/views', {
 // logger
 app.use(async (ctx, next) => {
   const start = new Date()
+  //  设置cookie跨域,生产环境下要注释掉
+    ctx.set('Access-Control-Allow-Origin','http://localhost:8081');
+    ctx.set('Access-Control-Allow-Credentials',true);
+  //  设置cookie跨域end
   await next()
   const ms = new Date() - start
   console.log(`${ctx.method} ${ctx.url} - ${ms}ms`)
@@ -43,7 +49,11 @@ app.use(async (ctx, next) => {
 
 // routes
 app.use(index.routes(), index.allowedMethods())
+//用户登录注册
 app.use(users.routes(), users.allowedMethods())
+//用户登录校验
+app.use(user_controller.checkUserLogin)
+//新闻模块
 app.use(news_router.routes(), news_router.allowedMethods())
 //连接数据库
 mongoose.connect('localhost','27017',function (error) {
