@@ -20,7 +20,6 @@ const newsModel = require('../../model/News')
 exports.add_news = async (ctx, next) => {
     let add_obj = ctx.request.body;
     let return_obj;
-    console.log('来新增啊')
     await newsModel.create(add_obj).then((res) =>{
         console.log('新增成功')
         return_obj = {

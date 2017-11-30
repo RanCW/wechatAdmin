@@ -38,52 +38,36 @@ exports.user_login = async (ctx, next) => {
         user_name: user_name,
         pass_word: pass_word
     }
-    let returnObj;
-    await Users.findOne(creatObj).then(function(res){
-        if (res) {
-            returnObj = {
-                state: 1,
-                message: '登录成功',
-                user_name: res.user_name,
-                user_id: res.id
-            }
-            ctx.cookies.set('user_name', res.user_name)
-            ctx.cookies.set('user_id', res.id)
-        } else {
-            returnObj = {
-                state: 0,
-                message: '用户名或密码错误'
-            }
-        }
-        ctx.body = returnObj;
-    }).catch(err => {
+    let returnObj;//返回结果
+    let find_result=await Users.find_by_options(creatObj);
+    if(!find_result){
         returnObj = {
             state: 2,
-            message: err
+            data:find_result,
+            message: '用户或密码错误'
         };
         ctx.body = returnObj;
-    });
+    }else{
+        returnObj = {
+            state: 1,
+            message: '登录成功',
+            data:{
+                user_name:find_result.user_name,
+                id:find_result.id
+            }
+        }
+        ctx.cookies.set('user_name', find_result.user_name);
+        ctx.cookies.set('user_id', find_result.id);
+        ctx.body = returnObj;
+    }
 }
-//用户登录状态校验
-async function findUser(options) {
-    let result;
-    await Users.findOne(options).then(res=>{
-        result=true;
-    }).catch(err => {
-        result=false;
-    });
-    return result;
-}
+
+//校验用户登录
 exports.checkUserLogin = async function(ctx, next){
     let user_id = ctx.cookies.get('user_id');
-    let user_name = ctx.cookies.get('user_name');
-    let checkObj = {
-        _id: user_id,
-        user_name: user_name
-    };
     let returnObj;
-    let result=await findUser();
-   if (result&&user_id&&user_name){
+    let result=await Users.find_by_id(user_id);//通过用户id查找数据库
+   if (result&&user_id){
        await next();
    }else{
        returnObj = {
