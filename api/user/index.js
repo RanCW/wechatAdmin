@@ -39,59 +39,58 @@ exports.user_login = async (ctx, next) => {
         pass_word: pass_word
     }
     let returnObj;
-    await Users.findOne(creatObj, (err, res) => {
-        if (err) {
+    await Users.findOne(creatObj).then(function(res){
+        if (res) {
             returnObj = {
-                state: 2,
-                message: err
+                state: 1,
+                message: '登录成功',
+                user_name: res.user_name,
+                user_id: res.id
             }
+            ctx.cookies.set('user_name', res.user_name)
+            ctx.cookies.set('user_id', res.id)
         } else {
-            if (res) {
-                returnObj = {
-                    state: 1,
-                    message: '登录成功',
-                    user_name: res.user_name,
-                    user_id: res.id
-                }
-                ctx.cookies.set('user_name',res.user_name)
-                ctx.cookies.set('user_id',res.id)
-            } else {
-                returnObj = {
-                    state: 0,
-                    message: '用户名或密码错误'
-                }
+            returnObj = {
+                state: 0,
+                message: '用户名或密码错误'
             }
         }
+        ctx.body = returnObj;
+    }).catch(err => {
+        returnObj = {
+            state: 2,
+            message: err
+        };
         ctx.body = returnObj;
     });
 }
 //用户登录状态校验
-exports.checkUserLogin=async (ctx,next)=>{
-    let user_id=ctx.cookies.get('user_id')
-    let user_name=ctx.cookies.get('user_name')
-    let checkObj={
-        _id:user_id,
-        user_name:user_name
-    }
-    let  returnObj;
-    await Users.findOne(checkObj, (err, res) => {
-        if (err) {
-            returnObj = {
-                state: 2,
-                message: err
-            }
-            return;
-        } else {
-            if (res) {
-                next();
-            } else {
-                returnObj = {
-                    state: 0,
-                    message: '用户未登录'
-                }
-                ctx.body = returnObj;
-                return;
-            }
-        }
+async function findUser(options) {
+    let result;
+    await Users.findOne(options).then(res=>{
+        result=true;
+    }).catch(err => {
+        result=false;
     });
+    return result;
+}
+exports.checkUserLogin = async function(ctx, next){
+    let user_id = ctx.cookies.get('user_id');
+    let user_name = ctx.cookies.get('user_name');
+    let checkObj = {
+        _id: user_id,
+        user_name: user_name
+    };
+    let returnObj;
+    let result=await findUser();
+   if (result&&user_id&&user_name){
+       await next();
+   }else{
+       returnObj = {
+           state: 2,
+           message: '用户未登录'
+       };
+       ctx.body = returnObj;
+       return;
+   }
 }

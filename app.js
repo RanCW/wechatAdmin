@@ -51,18 +51,28 @@ app.use(async (ctx, next) => {
 app.use(index.routes(), index.allowedMethods())
 //用户登录注册
 app.use(users.routes(), users.allowedMethods())
-//用户登录校验
-app.use(user_controller.checkUserLogin)
-//新闻模块
-app.use(news_router.routes(), news_router.allowedMethods())
 //连接数据库
-mongoose.connect('localhost','27017',function (error) {
-  if (error){
+mongoose.Promise = require('bluebird');
+const options = {
+    promiseLibrary: global.Promise,
+    useMongoClient: true,
+};
+mongoose.connect('mongodb://localhost:27017/27017',options).then(function(error) {
+    // if (error){
+    //     console.log('连接数据库失败')
+    // }else{
+        console.log('连接数据库成功');
+        //用户登录注册
+        app.use(users.routes(), users.allowedMethods())
+        //用户登录校验
+        app.use(user_controller.checkUserLogin)
+        //新闻模块
+        app.use(news_router.routes(), news_router.allowedMethods())
+    // }
+}).catch(function (err) {
     console.log('连接数据库失败')
-  }else{
-    console.log('连接数据库成功');
-  }
-});
+
+})
 // error-handling
 app.on('error', (err, ctx) => {
   console.error('server error', err, ctx)
