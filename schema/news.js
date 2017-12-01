@@ -26,8 +26,9 @@ const news=new mongoose.Schema({
 
 /**分页查询
  * @param title 文章标题 {String}
- * @param page_size 分页大小{Number}
- * @param count 跳过的文档数量{Number}
+ * @param {Number} page_size 分页大小
+ * @param {Number} count 跳过的文档数量
+ * @returns {Object} 查询到的结果
  * */
 news.statics.find_by_page=async function(title,page_size,count) {
     let result;
