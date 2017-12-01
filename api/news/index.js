@@ -46,29 +46,19 @@ exports.add_news = async (ctx, next) => {
  * 查询新闻列表
  * * */
 exports.get_news_list = async (ctx, next) => {
-    console.log('进来了查询')
     let keywords = ctx.request.body.keywords;
     if (keywords) {
         let findObj = {
             title: keywords
         }
     }
-    cosnole.log('走了这里啊1')
-    let resultObj;
-    await newsModel.find({}, (err, docs) => {
-        console.log('查询的结果')
-        if (err) {
-            resultObj = {
-                state: 0,
-                message: err
-            }
-        } else {
-            resultObj = {
-                state: 1,
-                data: docs
-            }
-        }
-    })
-    cosnole.log('走了这里啊')
-    ctx.body = resultObj;
+    let data;
+    data=await newsModel.find_by_page('',10,10);
+    let total=await newsModel.find_all_count();
+    ctx.body = {
+        message:'查询成功',
+        state:1,
+        total:total,
+        data:data
+    };
 }

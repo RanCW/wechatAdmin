@@ -18,7 +18,6 @@ userSchema.statics.find_by_id = async function (id) {
         return false;
     } else {
         await this.findOne({_id: id}).then(res => {
-            console.log('静态查找', res)
             result = res;
         }).catch(err => {
             result = err;
