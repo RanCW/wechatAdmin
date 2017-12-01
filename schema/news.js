@@ -40,6 +40,7 @@ news.statics.find_by_page=async function(title,page_size,count) {
     return result;
 }
 /**查询所有的总共条数
+ * 
  * */
 news.statics.find_all_count=async function () {
     let count;
