@@ -1,7 +1,8 @@
 /**
  * Created by ranchengwei on 2017/11/21.
  */
-const mongoose=require('mongoose')
+const Utils=require('../api/utils/index');//自己写的工具类函数
+const mongoose=require('mongoose');
 const news=new mongoose.Schema({
     title: {//标题
         type:String
@@ -32,19 +33,29 @@ const news=new mongoose.Schema({
  * */
 news.statics.find_by_page=async function(title,page_size,count) {
     let result;
-    await this.find().limit(page_size).skip(count).sort({'create_time':-1}).then(res=>{
+    if(!Utils.isNull(title)){//非空
+      let reg = new RegExp(title, 'i'); //不区分大小写
+      await this.find({'title':{$regex : reg}}).limit(page_size).skip(count).sort({'create_time':-1}).then(res=>{
         result=res;
-    }).catch(err=>{
+      }).catch(err=>{
         result=err;
-    });
+      });
+    }else{
+      await this.find().limit(page_size).skip(count).sort({'create_time':-1}).then(res=>{
+        result=res;
+      }).catch(err=>{
+        result=err;
+      });
+    }
     return result;
 }
 /**查询所有的总共条数
- * 
+ * @param {Object} option——查找条件
  * */
-news.statics.find_all_count=async function () {
+news.statics.find_all_count=async function (option) {
     let count;
-    await this.count().then(res=>{
+    let rule=option;
+    await this.count(rule).then(res=>{
         count=res;
     }).catch(err=>{
         count=err;
