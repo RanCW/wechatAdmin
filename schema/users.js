@@ -13,16 +13,10 @@ const userSchema = new mongoose.Schema({
  *@param id 用户ID {String}
  * */
 userSchema.statics.find_by_id = async function (id) {
-    let result;
     if (!id) {
         return false;
     } else {
-        await this.findOne({_id: id}).then(res => {
-            result = res;
-        }).catch(err => {
-            result = err;
-        });
-        return result;
+        return await this.findOne({_id: id});
     }
 
 }
@@ -36,12 +30,7 @@ userSchema.statics.find_by_options = async function (options) {
     if (!options) {
         return result;
     } else {
-        await this.findOne(options).then(function (res) {
-            result = res;
-        }).catch(err => {
-            result = err;
-        });
-        return result;
+     return  await this.findOne(options);
     }
 }
 

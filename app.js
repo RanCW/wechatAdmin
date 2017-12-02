@@ -39,7 +39,7 @@ app.use(views(__dirname + '/views', {
 app.use(async (ctx, next) => {
   const start = new Date()
   //  设置cookie跨域,生产环境下要注释掉
-    ctx.set('Access-Control-Allow-Origin','http://localhost:8080');
+    ctx.set('Access-Control-Allow-Origin','http://localhost:8081');
     ctx.set('Access-Control-Allow-Credentials',true);
   //  设置cookie跨域end
   await next()
